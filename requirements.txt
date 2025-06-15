@@ -1,0 +1,23 @@
+# MCP 服务器核心依赖
+fastmcp==2.8.0
+mcp==1.9.4
+
+# HTTP 和异步支持
+httpx==0.28.1
+httpcore==1.0.9
+uvicorn==0.34.3
+fastapi==0.109.2
+sse-starlette==2.3.6
+
+# 数据处理和可视化
+matplotlib==3.10.0
+numpy==1.24.0
+pillow==11.2.1
+
+# HTTP 客户端
+requests==2.31.0
+
+# 其他工具
+pydantic==2.11.5
+python-dotenv==1.1.0
+rich==14.0.0 
