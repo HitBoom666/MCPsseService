@@ -41,7 +41,7 @@ def process_input_data(x_str, y_str):
 
 def ensure_output_dir():
     """确保输出目录存在"""
-    output_dir = "WebSite/static/charts"
+    output_dir = "D:/Code/XuMingHan/AIKnowledgeStorage/WebSite/static/charts"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
     return output_dir

@@ -1,3 +1,4 @@
 src/database/__pycache__/
+src/tools/__pycache__/
 logs/mcp_server.log
-charts/
+output/
