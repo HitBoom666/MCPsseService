@@ -16,16 +16,20 @@ from src.database.db_reader import DatabaseReader
 from src.tools.chart_utils import draw_chart
 from src.tools.web_control import open_website
 from fastmcp import FastMCP
+from src.config.config_loader import ConfigLoader
+
+# 获取配置
+config = ConfigLoader()
 
 # 确保日志目录存在
 os.makedirs('logs', exist_ok=True)
 
 # 配置日志
 logging.basicConfig(
-    level=logging.INFO,
+    level=getattr(logging, config.logging_config.get('level', 'INFO')),
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[
-        logging.FileHandler('logs/mcp_server.log'),
+        logging.FileHandler(config.logging_config.get('file', 'logs/mcp_server.log')),
         logging.StreamHandler()
     ]
 )
@@ -95,10 +99,10 @@ def drawChart(x_str: str, y_str: str, chart_type: str = 'bar',
 
 async def main():
     """启动 MCP 服务器"""
-    # 从环境变量或配置文件读取设置
-    host = os.getenv("MCP_HOST", "0.0.0.0")
-    port = int(os.getenv("MCP_PORT", "8000"))
-    path = os.getenv("MCP_PATH", "/sse")
+    # 从配置文件读取设置，环境变量优先
+    host = os.getenv("MCP_HOST", config.server_config.get('host', "0.0.0.0"))
+    port = int(os.getenv("MCP_PORT", str(config.server_config.get('port', 8000))))
+    path = os.getenv("MCP_PATH", config.server_config.get('path', "/sse"))
     
     logger.info(f"启动 MCP 服务器...")
     logger.info(f"地址: http://{host}:{port}{path}")

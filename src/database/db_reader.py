@@ -1,18 +1,37 @@
 import sqlite3
 from typing import Dict, List, Tuple
 import os
+from src.config.config_loader import ConfigLoader
 
 class DatabaseReader:
-    def __init__(self, db_name: str = "project_storage.db"):
+    def __init__(self, db_name: str = None):
         """初始化数据库读取器
         
         Args:
-            db_name (str): 数据库文件名
+            db_name (str): 数据库文件名，如果为None则使用配置中的名称
         """
-        # 设置数据库文件路径 - 指向src/database/Data/目录
-        current_dir = os.path.dirname(__file__)
-        data_dir = os.path.join(current_dir, "Data")
-        self.db_name = os.path.join(data_dir, db_name)
+        # 获取配置
+        config = ConfigLoader()
+        
+        # 如果没有指定数据库名，使用配置中的名称
+        if db_name is None:
+            db_name = config.database_config.get('name', 'project_storage.db')
+        
+        # 设置数据库文件路径
+        if config.database_config.get('path'):
+            # 如果配置中有绝对路径，使用配置路径
+            if os.path.isabs(config.database_config['path']):
+                self.db_name = config.database_config['path']
+            else:
+                # 相对路径，从项目根目录开始
+                project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+                self.db_name = os.path.join(project_root, config.database_config['path'])
+        else:
+            # 如果配置中没有指定路径，使用默认路径
+            current_dir = os.path.dirname(__file__)
+            data_dir = os.path.join(current_dir, "Data")
+            self.db_name = os.path.join(data_dir, db_name)
+            
         self.conn = None
         self.cursor = None
         print(f"数据库路径: {self.db_name}")

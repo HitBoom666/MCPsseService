@@ -9,9 +9,19 @@
     "file": "logs/mcp_server.log"
   },
   "database": {
-    "path": "../Method/Database/Data/project_storage.db"
+    "path": "src/database/Data/project_storage.db",
+    "name": "project_storage.db"
   },
   "charts": {
-    "output_dir": "../WebSite/static/charts"
+    "output_dir": "D:/Code/XuMingHan/AIKnowledgeStorage/WebSite/static/charts",
+    "figsize": [12, 7],
+    "dpi": 300,
+    "background_color": "#1a1a1a",
+    "font_family": "SimHei"
+  },
+  "mcp_pipe": {
+    "process_timeout": 5,
+    "initial_backoff": 1,
+    "max_backoff": 600
   }
 } 

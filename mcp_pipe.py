@@ -18,9 +18,13 @@ import signal
 import sys
 import random
 from dotenv import load_dotenv
+from src.config.config_loader import ConfigLoader
 
 # Load environment variables from .env file
 load_dotenv()
+
+# 获取配置
+config = ConfigLoader()
 
 # Configure logging
 logging.basicConfig(
@@ -29,9 +33,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger('MCP_PIPE')
 
-# Reconnection settings
-INITIAL_BACKOFF = 1  # Initial wait time in seconds
-MAX_BACKOFF = 600  # Maximum wait time in seconds
+# Reconnection settings from config
+INITIAL_BACKOFF = config.mcp_pipe_config.get('initial_backoff', 1)  # Initial wait time in seconds
+MAX_BACKOFF = config.mcp_pipe_config.get('max_backoff', 600)  # Maximum wait time in seconds
+PROCESS_TIMEOUT = config.mcp_pipe_config.get('process_timeout', 5)  # Process termination timeout
 reconnect_attempt = 0
 backoff = INITIAL_BACKOFF
 
@@ -95,7 +100,7 @@ async def connect_to_server(uri):
             logger.info(f"Terminating {mcp_script} process")
             try:
                 process.terminate()
-                process.wait(timeout=5)
+                process.wait(timeout=PROCESS_TIMEOUT)
             except subprocess.TimeoutExpired:
                 process.kill()
             logger.info(f"{mcp_script} process terminated")

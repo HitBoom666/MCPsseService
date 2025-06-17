@@ -8,11 +8,15 @@ import os
 from datetime import datetime
 import subprocess
 import platform
+from src.config.config_loader import ConfigLoader
 
 logger = logging.getLogger(__name__)
 
+# 获取配置
+config = ConfigLoader()
+
 # 设置中文字体
-plt.rcParams['font.sans-serif'] = ['SimHei']  # 用来正常显示中文标签
+plt.rcParams['font.sans-serif'] = [config.charts_config.get('font_family', 'SimHei')]  # 用来正常显示中文标签
 plt.rcParams['axes.unicode_minus'] = False  # 用来正常显示负号
 
 # 设置全局样式
@@ -39,53 +43,47 @@ def process_input_data(x_str, y_str):
     except Exception as e:
         raise ValueError(f"数据格式错误: {str(e)}")
 
-def ensure_output_dir():
-    """确保输出目录存在"""
-    output_dir = "D:/Code/XuMingHan/AIKnowledgeStorage/WebSite/static/charts"
-    if not os.path.exists(output_dir):
-        os.makedirs(output_dir)
-    return output_dir
-
-def open_image(filepath):
+def adjust_x_labels(ax, x_values):
     """
-    根据操作系统打开图片文件
+    自动调整X轴标签
     """
     try:
-        if platform.system() == 'Windows':
-            os.startfile(filepath)
-        elif platform.system() == 'Darwin':  # macOS
-            subprocess.run(['open', filepath])
-        else:  # Linux
-            subprocess.run(['xdg-open', filepath])
+        # 如果标签过多，进行旋转
+        if len(x_values) > 10:
+            plt.xticks(rotation=45)
+        else:
+            plt.xticks(rotation=0)
     except Exception as e:
-        logger.error(f"打开图片失败: {str(e)}")
+        logger.warning(f"调整X轴标签失败: {str(e)}")
 
-def adjust_x_labels(ax, x_values, max_chars=10):
+def ensure_output_dir():
     """
-    自动调整X轴标签的显示方式
-    
-    参数:
-    ax: 坐标轴对象
-    x_values: X轴标签值列表
-    max_chars: 标签最大字符数
+    确保输出目录存在
     """
-    # 获取当前图形大小
-    fig = ax.get_figure()
-    fig_width = fig.get_figwidth()
+    output_dir = config.charts_config.get('output_dir', 'charts')
     
-    # 计算每个标签的可用空间
-    n_labels = len(x_values)
-    available_width = fig_width / n_labels
+    # 如果是相对路径，从项目根目录开始
+    if not os.path.isabs(output_dir):
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
+        output_dir = os.path.join(project_root, output_dir)
     
-    # 如果标签太长或太拥挤，进行旋转
-    if any(len(str(x)) > max_chars for x in x_values) or available_width < 0.5:
-        # 旋转标签
-        plt.xticks(rotation=45, ha='right')
-        # 调整底部边距，确保标签不被切掉
-        plt.subplots_adjust(bottom=0.2)
-    else:
-        # 如果标签较短，保持水平
-        plt.xticks(rotation=0)
+    os.makedirs(output_dir, exist_ok=True)
+    return output_dir
+
+def open_image(image_path):
+    """
+    打开图片文件
+    """
+    try:
+        system = platform.system()
+        if system == "Windows":
+            os.startfile(image_path)
+        elif system == "Darwin":  # macOS
+            subprocess.run(["open", image_path])
+        else:  # Linux
+            subprocess.run(["xdg-open", image_path])
+    except Exception as e:
+        logger.warning(f"打开图片失败: {str(e)}")
 
 def draw_chart(x_str, y_str, chart_type='bar', title="图表", x_label="X轴", y_label="Y轴", color='#00ff9f', bar_width=0.5, marker='o'):
     """
@@ -106,11 +104,15 @@ def draw_chart(x_str, y_str, chart_type='bar', title="图表", x_label="X轴", y
         # 处理输入数据
         x_values, y_values = process_input_data(x_str, y_str)
         
+        # 从配置获取图表参数
+        figsize = config.charts_config.get('figsize', [12, 7])
+        background_color = config.charts_config.get('background_color', '#1a1a1a')
+        
         # 创建图形和坐标轴
-        fig, ax = plt.subplots(figsize=(12, 7), facecolor='#1a1a1a')
+        fig, ax = plt.subplots(figsize=figsize, facecolor=background_color)
         
         # 设置背景色
-        ax.set_facecolor('#1a1a1a')
+        ax.set_facecolor(background_color)
         
         # 创建渐变色
         colors = plt.cm.viridis(np.linspace(0, 1, len(x_values)))
@@ -137,7 +139,7 @@ def draw_chart(x_str, y_str, chart_type='bar', title="图表", x_label="X轴", y
             # 在数据点上方显示数值
             for i, v in enumerate(y_values):
                 ax.text(i, v, f'{v}', ha='center', va='bottom', fontsize=10, color='white')
-        
+            
         # 设置标题和轴标签
         ax.set_title(title, fontsize=16, pad=20, color='white', fontweight='bold')
         ax.set_xlabel(x_label, fontsize=12, labelpad=10, color='white')
@@ -171,7 +173,8 @@ def draw_chart(x_str, y_str, chart_type='bar', title="图表", x_label="X轴", y
         filepath = os.path.join(output_dir, filename)
         
         # 保存图表
-        plt.savefig(filepath, dpi=300, bbox_inches='tight')
+        dpi = config.charts_config.get('dpi', 300)
+        plt.savefig(filepath, dpi=dpi, bbox_inches='tight')
         
         # 打开保存的图片
         open_image(filepath)
