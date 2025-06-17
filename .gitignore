@@ -1,2 +1,3 @@
 src/database/__pycache__/
 logs/mcp_server.log
+charts/
