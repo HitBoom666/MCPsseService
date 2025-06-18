@@ -70,27 +70,40 @@ def getDataFromDatabase(table_name: str) -> dict:
         return {"success": False, "error": str(e)}
 
 @mcp.tool()
-def drawChart(x_str: str, y_str: str, chart_type: str = 'bar', 
-              title: str = "图表", x_label: str = "X轴", y_label: str = "Y轴", 
-              color: str = '#00ff9f', bar_width: float = 0.5, marker: str = 'o') -> dict:
-    """绘制图表
-    
-    Args:
-        x_str: X轴数据，逗号分隔
-        y_str: Y轴数据，逗号分隔
-        chart_type: 图表类型 ('bar' 或 'line')
-        title: 图表标题
-        x_label: X轴标签
-        y_label: Y轴标签
-        color: 图表颜色
-        bar_width: 柱状图宽度
-        marker: 折线图标记
-        
-    Returns:
-        dict: 图表生成结果
+def drawChart(data_input, title="多系列图表", x_label="X轴") -> dict:
+    """
+    绘制支持多组数据和混合图表类型的图表
+    important!!! 如果想要在一张图表中绘制多组数据，或绘制折线图柱状图混合图表，请在series中添加多组数据。
+    在传入json的时候，如果你能获取到相应数据，各个字段请确保有确切清晰的值，比如x_data的值是具体的项目名称而不是项目A。
+    参数:
+    data_input: 数据输入，支持两种格式：
+        JSON格式字符串或字典（推荐）:
+        {
+            "x_data": ["类别1", "类别2", "类别3"],
+            "series": [
+                {
+                    "name": "系列1",
+                    "data": [10, 20, 30],
+                    "type": "bar",
+                    "y_unit": "数量",
+                    "color": "#00ff9f"
+                },
+                {
+                    "name": "系列2", 
+                    "data": [15, 25, 35],
+                    "type": "line",
+                    "y_unit": "百分比",
+                    "color": "#ff6b6b",
+                    "marker": "o"
+                }
+            ]
+        }
+
+    title: 图表标题
+    x_label: X轴标签
     """
     try:
-        result = draw_chart(x_str, y_str, chart_type, title, x_label, y_label, color, bar_width, marker)
+        result = draw_chart(data_input, title, x_label)
         logger.info(f"成功创建图表: {title}")
         return {"success": True, "result": result}
     except Exception as e:

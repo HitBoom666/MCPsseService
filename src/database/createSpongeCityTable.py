@@ -33,7 +33,9 @@ def create_sponge_city_table():
             (None, "系统管理", "用户管理", "http://159.75.69.88:9301/#/sys/user/list", "用户权限管理", "包含用户信息管理", None, None),
             (None, "系统管理", "机构管理", "http://159.75.69.88:9301/#/sys/organizationManage/list", "组织机构管理", "包含机构信息管理", None, None),
             (None, "海绵一张图", "全域总览", "http://47.93.136.18:8098/#/", "全域监测总览", "包含全域监测数据", None, None),
-            (None, "海绵一张图", "城市特征", "http://47.93.136.18:8098/#/urbanCharacteristics", "城市特征分析", "包含城市特征数据", None, None)
+            (None, "海绵一张图", "城市特征", "http://47.93.136.18:8098/#/urbanCharacteristics", "城市特征分析", "包含城市特征数据", None, None),
+            (None, "问禹AI", "问禹AI", "http://localhost:5000/modern-full", "AI助手", "可以帮助回答水务问题以及绘制表格/查询数据库等", None, None)
+        
         ]
         
         # 插入数据
