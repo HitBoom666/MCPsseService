@@ -21,7 +21,7 @@ timeout /t 5 /nobreak >nul
 
 echo.
 echo Setting MCP environment variable...
-set MCP_ENDPOINT=wss://api.xiaozhi.me/mcp/?token=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI4MjM4MywiYWdlbnRJZCI6NDAzOTUwLCJlbmRwb2ludElkIjoiYWdlbnRfNDAzOTUwIiwicHVycG9zZSI6Im1jcC1lbmRwb2ludCIsImlhdCI6MTc0OTczMDYzM30.tF_YMI9nnkiv8xVoOtqf5A8q1S1NJz3evLwXG4J5K3120pbqkk6lV37W6Qj-qxnXeS5Cji4aA7S5VGIerilnMw
+set MCP_ENDPOINT=wss://api.xiaozhi.me/mcp/?token=eyJhbGciOiJFUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjI4MjM4MywiYWdlbnRJZCI6NDAzOTUwLCJlbmRwb2ludElkIjoiYWdlbnRfNDAzOTUwIiwicHVycG9zZSI6Im1jcC1lbmRwb2ludCIsImlhdCI6MTc1MDI2NTE2NX0.ECKE6LRFPkfAe2YqtgQzHSX1JEZAFegoMQb2J-ucNus4KWJblUFOnJZy4ss8p5F7JbOVUxpti5TVN5SL93tXmw
 
 echo.
 echo Starting MCP Pipe connection...

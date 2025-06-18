@@ -155,7 +155,10 @@ def draw_series_on_axis(ax, x_values, series_list, colors_palette, bar_positions
             # 绘制柱状图
             x_pos = bar_positions + (bar_index - (sum(1 for s in series_list if s.get('type', 'bar') == 'bar') - 1) / 2) * bar_offset
             bars = ax.bar(x_pos, series_data, bar_width * 0.8, 
-                         label=series_name, color=series_color, alpha=0.8)
+                         color=series_color, alpha=0.8)
+            
+            # 手动设置图例标签（解决_nolegend_问题）
+            bars[0].set_label(series_name)
             
             # 添加柱状图边框效果
             for bar in bars:
@@ -194,16 +197,42 @@ def draw_series_on_axis(ax, x_values, series_list, colors_palette, bar_positions
 
 def adjust_x_labels(ax, x_values):
     """
-    自动调整X轴标签
+    智能调整X轴标签，避免重叠
     """
     try:
-        # 如果标签过多，进行旋转
-        if len(x_values) > 10:
-            plt.xticks(rotation=45)
+        # 计算标签的平均长度
+        avg_label_length = sum(len(str(label)) for label in x_values) / len(x_values)
+        max_label_length = max(len(str(label)) for label in x_values)
+        
+        # 获取图表宽度（英寸）
+        fig = ax.get_figure()
+        fig_width_inch = fig.get_figwidth()
+        
+        # 估算每个标签需要的最小宽度（英寸）
+        # 假设每个字符大约需要0.1英寸，中文字符需要0.15英寸
+        estimated_width_per_label = max_label_length * 0.12  # 稍微保守一些
+        total_estimated_width = len(x_values) * estimated_width_per_label
+        
+        # 判断是否需要旋转
+        if total_estimated_width > fig_width_inch * 0.8:  # 如果估算宽度超过图表宽度的80%
+            if max_label_length > 8 or len(x_values) > 15:  # 标签很长或数量很多
+                ax.tick_params(axis='x', rotation=45, labelsize=9)
+                plt.setp(ax.get_xticklabels(), ha='right')  # 右对齐
+            else:
+                ax.tick_params(axis='x', rotation=30, labelsize=10)
+                plt.setp(ax.get_xticklabels(), ha='right')
+        elif len(x_values) > 8:  # 数量较多但标签不长
+            ax.tick_params(axis='x', rotation=15, labelsize=10)
         else:
-            plt.xticks(rotation=0)
+            ax.tick_params(axis='x', rotation=0, labelsize=11)
+            
     except Exception as e:
         logger.warning(f"调整X轴标签失败: {str(e)}")
+        # 降级处理
+        if len(x_values) > 10:
+            ax.tick_params(axis='x', rotation=45)
+        else:
+            ax.tick_params(axis='x', rotation=0)
 
 def ensure_output_dir():
     """
@@ -235,7 +264,6 @@ def open_image(image_path):
         logger.warning(f"打开图片失败: {str(e)}")
 
 def draw_chart(data_input, title="多系列图表", x_label="X轴"):
-    print(f"[DEBUG] draw_chart被调用，参数: data_input={data_input}, title={title}, x_label={x_label}")
     try:
         # 检查输入格式并处理数据
         if isinstance(data_input, (str, dict)):
@@ -326,14 +354,28 @@ def draw_chart(data_input, title="多系列图表", x_label="X轴"):
         
         # 添加图例
         if legend_handles:
-            legend = ax1.legend(handles=legend_handles, loc='upper left', 
-                              fancybox=True, shadow=True, framealpha=0.9,
-                              facecolor='#2a2a2a', edgecolor='white')
+            # 根据系列数量智能选择图例位置
+            num_series = len(legend_handles)
+            if num_series <= 3:
+                legend_loc = 'upper left'
+                ncol = 1
+            elif num_series <= 6:
+                legend_loc = 'upper right'
+                ncol = 2
+            else:
+                legend_loc = 'upper center'
+                ncol = min(3, num_series // 2 + 1)
+                
+            legend = ax1.legend(handles=legend_handles, loc=legend_loc, ncol=ncol,
+                              fancybox=True, shadow=True, framealpha=0.95,
+                              facecolor='#2a2a2a', edgecolor='white',
+                              fontsize=10, markerscale=1.2)
             legend.get_frame().set_facecolor('#2a2a2a')
+            legend.get_frame().set_linewidth(1)
             for text in legend.get_texts():
                 text.set_color('white')
         
-        # 自动调整X轴标签
+        # 智能调整X轴标签，避免重叠
         adjust_x_labels(ax1, x_values)
         
         # 自动调整布局
