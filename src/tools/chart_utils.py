@@ -1,8 +1,6 @@
 import logging
 import matplotlib.pyplot as plt
 import numpy as np
-from matplotlib import font_manager
-import matplotlib as mpl
 from matplotlib import patheffects
 import os
 from datetime import datetime
@@ -396,7 +394,8 @@ def draw_chart(data_input, title="多系列图表", x_label="X轴"):
         
         # 只获取文件名
         filename = "/static/charts/"+os.path.basename(filepath)
-        return f"图片保存至: {filename}，请将整个地址输出以展示图片"
+        message = f"{title}图表已生成，请查看\n![{title}]({filename})"
+        return message
         
     except Exception as e:
         logger.error(f"绘制图表失败: {str(e)}")

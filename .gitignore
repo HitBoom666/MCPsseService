@@ -3,3 +3,4 @@ src/tools/__pycache__/
 src/config/__pycache__/
 logs/mcp_server.log
 output/
+__pycache__/
