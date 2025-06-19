@@ -71,7 +71,7 @@ def getDataFromDatabase(table_name: str) -> dict:
         return {"success": False, "error": str(e)}
 
 @mcp.tool()
-def drawChart(data_input, title="多系列图表", x_label="X轴", userName = None) -> dict:
+def drawChart(data_input, title="多系列图表", x_label="X轴", userName = "Unknown") -> dict:
     """
     绘制支持多组数据和混合图表类型的图表
     important!!! 如果想要在一张图表中绘制多组数据，或绘制折线图柱状图混合图表，请在series中添加多组数据。

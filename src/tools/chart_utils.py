@@ -394,7 +394,7 @@ def draw_chart(data_input, title="多系列图表", x_label="X轴"):
         
         # 只获取文件名
         filename = "/static/charts/"+os.path.basename(filepath)
-        message = f"{title}图表已生成，请查看\n![{title}]({filename})"
+        message = f"{title}已生成，请查看\n![{title}]({filename})"
         return message
         
     except Exception as e:
