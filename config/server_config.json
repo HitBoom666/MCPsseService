@@ -13,7 +13,7 @@
     "name": "project_storage.db"
   },
   "charts": {
-    "output_dir": "D:/Code/XuMingHan/AIKnowledgeStorage/WebSite/static/charts",
+    "output_dir": "outPut/charts",
     "figsize": [12, 7],
     "dpi": 300,
     "background_color": "#1a1a1a",

@@ -1,6 +1,37 @@
+# Python缓存文件
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# 项目特定缓存
 src/database/__pycache__/
 src/tools/__pycache__/
 src/config/__pycache__/
-logs/mcp_server.log
+
+# 日志文件
+logs/
+*.log
+
+# 输出目录
 output/
-__pycache__/
+outPut/
+
+# 数据库文件
+*.db
+*.sqlite
+*.sqlite3
+
+# 临时文件
+*.tmp
+*.temp
+
+# IDE文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 系统文件
+.DS_Store
+Thumbs.db
