@@ -959,6 +959,74 @@ def get_map_zoom(map_type):
     }
     return zooms.get(map_type, zooms['china'])
 
+def normalize_region_name(name, map_type):
+    """
+    标准化区域名称，确保与地图数据中的名称匹配
+    """
+    # 山东省城市名称映射
+    shandong_city_mapping = {
+        '济南': '济南市',
+        '青岛': '青岛市', 
+        '烟台': '烟台市',
+        '潍坊': '潍坊市',
+        '临沂': '临沂市',
+        '淄博': '淄博市',
+        '济宁': '济宁市',
+        '泰安': '泰安市',
+        '聊城': '聊城市',
+        '威海': '威海市',
+        '枣庄': '枣庄市',
+        '德州': '德州市',
+        '东营': '东营市',
+        '菏泽': '菏泽市',
+        '日照': '日照市',
+        '滨州': '滨州市'
+    }
+    
+    # 省份名称映射
+    province_mapping = {
+        '山东': '山东省',
+        '北京': '北京市',
+        '上海': '上海市',
+        '天津': '天津市',
+        '重庆': '重庆市',
+        '河北': '河北省',
+        '山西': '山西省',
+        '辽宁': '辽宁省',
+        '吉林': '吉林省',
+        '黑龙江': '黑龙江省',
+        '江苏': '江苏省',
+        '浙江': '浙江省',
+        '安徽': '安徽省',
+        '福建': '福建省',
+        '江西': '江西省',
+        '河南': '河南省',
+        '湖北': '湖北省',
+        '湖南': '湖南省',
+        '广东': '广东省',
+        '海南': '海南省',
+        '四川': '四川省',
+        '贵州': '贵州省',
+        '云南': '云南省',
+        '陕西': '陕西省',
+        '甘肃': '甘肃省',
+        '青海': '青海省',
+        '宁夏': '宁夏回族自治区',
+        '新疆': '新疆维吾尔自治区',
+        '西藏': '西藏自治区',
+        '广西': '广西壮族自治区',
+        '内蒙古': '内蒙古自治区'
+    }
+    
+    # 根据地图类型选择映射
+    if map_type == 'shandong':
+        return shandong_city_mapping.get(name, name)
+    elif map_type == 'china':
+        return province_mapping.get(name, name)
+    else:
+        # 其他省份的城市，暂时直接返回原名称
+        return name
+
 def generate_map_config(data, title):
     """生成地图配置"""
     map_type = data.get('map_type', 'china')  # 默认中国地图
@@ -1013,6 +1081,16 @@ def generate_map_config(data, title):
     
     # 如果只有区域数据，使用简单的地图模式
     if 'regions' in data and 'scatter_data' not in data:
+        # 标准化区域数据名称
+        normalized_regions = []
+        for region in data['regions']:
+            normalized_name = normalize_region_name(region['name'], map_type)
+            normalized_regions.append({
+                'name': normalized_name,
+                'value': region['value']
+            })
+            logger.info(f"地图数据映射: {region['name']} -> {normalized_name} (值: {region['value']})")
+        
         # 区域数据图
         map_config['series'].append({
             'name': '数据',
@@ -1021,7 +1099,7 @@ def generate_map_config(data, title):
             'roam': True,
             'zoom': get_map_zoom(map_type),
             'center': get_map_center(map_type),
-            'data': data['regions'],
+            'data': normalized_regions,
             'emphasis': {
                 'itemStyle': {
                     'areaColor': '#f4e925'
