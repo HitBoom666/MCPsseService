@@ -21,37 +21,37 @@ class ConfigLoader:
         except Exception as e:
             print(f"加载配置文件失败: {e}")
             # 设置默认配置
-            self._config = self._get_default_config()
+            #self._config = self._get_default_config()
 
-    def _get_default_config(self):
-        """获取默认配置"""
-        return {
-            "server": {
-                "host": "0.0.0.0",
-                "port": 8000,
-                "path": "/sse"
-            },
-            "logging": {
-                "level": "INFO",
-                "file": "logs/mcp_server.log"
-            },
-            "database": {
-                "path": "src/database/Data/project_storage.db",
-                "name": "project_storage.db"
-            },
-            "charts": {
-                "output_dir": "WebSite/static/charts",
-                "figsize": [12, 7],
-                "dpi": 300,
-                "background_color": "#1a1a1a",
-                "font_family": "SimHei"
-            },
-            "mcp_pipe": {
-                "process_timeout": 5,
-                "initial_backoff": 1,
-                "max_backoff": 600
-            }
-        }
+    # def _get_default_config(self):
+    #     """获取默认配置"""
+    #     return {
+    #         "server": {
+    #             "host": "0.0.0.0",
+    #             "port": 8000,
+    #             "path": "/sse"
+    #         },
+    #         "logging": {
+    #             "level": "INFO",
+    #             "file": "logs/mcp_server.log"
+    #         },
+    #         "database": {
+    #             "path": "src/database/Data/project_storage.db",
+    #             "name": "project_storage.db"
+    #         },
+    #         "charts": {
+    #             "output_dir": "WebSite\\static\\charts",
+    #             "figsize": [12, 7],
+    #             "dpi": 300,
+    #             "background_color": "#1a1a1a",
+    #             "font_family": "SimHei"
+    #         },
+    #         "mcp_pipe": {
+    #             "process_timeout": 5,
+    #             "initial_backoff": 1,
+    #             "max_backoff": 600
+    #         }
+    #     }
 
     @property
     def server_config(self):

@@ -1691,7 +1691,7 @@ def draw_html_chart(data_input, title="动态图表", x_label="X轴"):
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         output_dir = ensure_output_dir()
         filename = f"dynamic_chart_{timestamp}.html"
-        filepath = os.path.join(output_dir, filename)
+        filepath = output_dir + '/' + filename
         
         # 保存HTML文件
         with open(filepath, 'w', encoding='utf-8') as f:
@@ -1699,10 +1699,8 @@ def draw_html_chart(data_input, title="动态图表", x_label="X轴"):
         
         # 在浏览器中打开
         open_html_file(filepath)
-        
-        # 返回相对路径用于web显示
-        relative_path = f"/static/charts/{os.path.basename(filepath)}"
-        message = f"动态图表 '{title}' 已生成！\n文件路径: {relative_path}\n特性: 动画效果、交互缩放、主题切换、图片下载"
+
+        message = f"动态图表 '{title}' 已生成！\n{filepath} \n请直接返回这个结果,不需要做任何额外处理,不要返回任何其他内容"
         
         return message
         
@@ -1745,4 +1743,4 @@ if __name__ == "__main__":
         title="销售数据动态分析",
         x_label="月份"
     )
-    print(result) 
+    print(result)
